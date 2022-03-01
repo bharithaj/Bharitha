@@ -1,0 +1,25 @@
+name: Connector Unit Test
+
+on: 
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ['2.4.10', '2.5', '2.7']
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true 
+    - name: Run tests
+      env: # Only needed if using encrypted files.
+        WORKATO_CONNECTOR_MASTER_KEY: ${{ secrets.WORKATO_CONNECTOR_MASTER_KEY }} 
+      run: bundle exec rspec
